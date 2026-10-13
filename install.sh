@@ -7,7 +7,7 @@ LEGACY_DIR=/opt/jtg-cloud
 LEGACY_HOME=/home/jtgcloud
 LEGACY_RUNTIME=/opt/jtg-cloud-runtime
 MANAGER_FILE=/root/jtg-cloud-manager.sh
-REPO_URL=https://github.com/JishnuTheGamer/jtg-cloud.git
+REPO_URL=https://github.com/Synoraxdev/hozvik-cloud-panel.git
 REPO_BRANCH=jtg-studio
 SOURCE_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]:-$0}")" && pwd -P)
 LOG_FILE=/var/log/jtg-cloud-install.log
@@ -130,7 +130,7 @@ clone_project() {
     source_remote=$(git -c safe.directory="$SOURCE_DIR" -C "$SOURCE_DIR" remote get-url origin 2>/dev/null) || source_remote=''
   fi
   case "$source_remote" in
-    "$REPO_URL"|"${REPO_URL%.git}"|git@github.com:JishnuTheGamer/jtg-cloud.git)
+    "$REPO_URL"|"${REPO_URL%.git}"|git@github.com:Synoraxdev/hozvik-cloud-panel.git)
       note 'Using the local checkout (committed source only).'
       run_command git -c safe.directory="$SOURCE_DIR" clone --no-hardlinks --branch "$REPO_BRANCH" -- "$SOURCE_DIR" "$APP_DIR" || return 1;;
     *)
