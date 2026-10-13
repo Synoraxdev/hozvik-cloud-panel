@@ -54,7 +54,7 @@ function fileType(entry) {
   return { icon:'file', color:'green', label:ext.length < 9 && ext !== entry.name ? ext.toUpperCase() : 'File' };
 }
 const tile = (name,color = '') => `<div class="tile-icon ${color}">${icon(name)}</div>`;
-const cloudArt = () => `<svg viewBox="0 0 300 180" aria-hidden="true"><ellipse cx="157" cy="155" rx="87" ry="12" fill="#d9d0f8"/><circle cx="220" cy="40" r="18" fill="#e2dafa"/><circle cx="65" cy="110" r="7" fill="#d9d0f7"/><path d="M95 131a37 37 0 0 1-8-73 52 52 0 0 1 99-6 40 40 0 1 1 12 79H95Z" fill="#fff"/><path d="M105 126a27 27 0 0 1-4-54 42 42 0 0 1 82-6 31 31 0 1 1 10 60H105Z" fill="#f8f6ff"/><rect x="116" y="65" width="66" height="72" rx="15" fill="#8f7ef1" transform="rotate(-7 149 101)"/><path d="m136 96 14-14 14 14m-14-13v34" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><rect x="213" y="98" width="33" height="38" rx="9" fill="#e4dcfc" transform="rotate(10 228 117)"/><path d="m222 119 4 4 9-10" fill="none" stroke="#9b8bcf" stroke-width="3" stroke-linecap="round"/><path d="m48 47 7 7 7-7m-7 7V35" fill="none" stroke="#b6a6e5" stroke-width="3" stroke-linecap="round"/><circle cx="243" cy="72" r="3" fill="#a896df"/><circle cx="74" cy="150" r="3" fill="#bdade9"/></svg>`;
+const cloudArt = () => `<svg viewBox="0 0 300 180" aria-hidden="true"><ellipse cx="157" cy="155" rx="87" ry="12" fill="var(--art-shadow)"/><circle cx="220" cy="40" r="18" fill="var(--art-dot)"/><circle cx="65" cy="110" r="7" fill="var(--art-dot)"/><path d="M95 131a37 37 0 0 1-8-73 52 52 0 0 1 99-6 40 40 0 1 1 12 79H95Z" fill="var(--art-cloud)"/><path d="M105 126a27 27 0 0 1-4-54 42 42 0 0 1 82-6 31 31 0 1 1 10 60H105Z" fill="var(--art-cloud-2)"/><rect x="116" y="65" width="66" height="72" rx="15" fill="var(--accent)" transform="rotate(-7 149 101)"/><path d="m136 96 14-14 14 14m-14-13v34" fill="none" stroke="var(--art-arrow)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><rect x="213" y="98" width="33" height="38" rx="9" fill="var(--art-dot)" transform="rotate(10 228 117)"/><path d="m222 119 4 4 9-10" fill="none" stroke="var(--art-line)" stroke-width="3" stroke-linecap="round"/><path d="m48 47 7 7 7-7m-7 7V35" fill="none" stroke="var(--art-line)" stroke-width="3" stroke-linecap="round"/><circle cx="243" cy="72" r="3" fill="var(--art-line)"/><circle cx="74" cy="150" r="3" fill="var(--art-line)"/></svg>`;
 function toast(message, error = false) { const div = document.createElement('div'); div.className = `toast ${error ? 'error' : ''}`; div.textContent = message; $('#toast').append(div); setTimeout(() => div.remove(), 4500); }
 async function api(route, options = {}) {
   const headers = { ...options.headers };
@@ -72,8 +72,11 @@ async function api(route, options = {}) {
 function applyBrand() {
   const c = state.config;
   document.title = c.siteName || 'JTG Cloud';
-  document.documentElement.style.setProperty('--accent', c.accent || '#7367f0');
-  document.documentElement.style.setProperty('--accent-soft', `${c.accent || '#7367f0'}15`);
+  // Legacy purple and the Hozvik green mean "use the theme's own accent"; any other owner-chosen color is applied.
+  const custom = c.accent && !['#7367f0', '#4ade80'].includes(c.accent.toLowerCase());
+  const root = document.documentElement.style;
+  if (custom) { root.setProperty('--accent', c.accent); root.setProperty('--accent-text', c.accent); root.setProperty('--accent-soft', `${c.accent}18`); }
+  else { root.removeProperty('--accent'); root.removeProperty('--accent-text'); root.removeProperty('--accent-soft'); }
   $('#favicon').href = c.favicon || '/mark.svg';
   $('#favicon').type = c.favicon ? c.favicon.split(';')[0].slice(5) : 'image/svg+xml';
   $$('[data-brand-name]').forEach(el => el.textContent = c.siteName);

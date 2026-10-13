@@ -1,15 +1,15 @@
 'use strict';
 (() => {
   const media = window.matchMedia('(prefers-color-scheme: dark)');
-  let preference = 'system';
-  try { preference = localStorage.getItem('jtg-theme') || 'system'; } catch {}
+  let preference = 'dark';
+  try { preference = localStorage.getItem('jtg-theme') || 'dark'; } catch {}
   if (!['light', 'dark', 'system'].includes(preference)) preference = 'system';
   function apply() {
     const theme = preference === 'system' ? (media.matches ? 'dark' : 'light') : preference;
     document.documentElement.dataset.theme = theme;
     document.documentElement.dataset.themePreference = preference;
     document.documentElement.style.colorScheme = theme;
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#101322' : '#f5f6fb');
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', theme === 'dark' ? '#0a0a0a' : '#f6f6f4');
     window.dispatchEvent(new CustomEvent('jtg-theme-change', { detail: { preference, theme } }));
   }
   window.JTGTheme = {
