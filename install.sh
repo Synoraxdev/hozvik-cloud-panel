@@ -176,8 +176,39 @@ const nested=(a,b)=>{const relative=path.relative(a,b);return !relative || (rela
 if(nested(directories[0],directories[1])||nested(directories[1],directories[0])) throw new Error('Data and backup directories must not overlap.');
 JS
 }
+ensure_env_file() {
+  [[ -f .env ]] && return 0
+  if [[ -f .env.example ]]; then cp -- .env.example .env; return 0; fi
+  # GitHub web uploads often skip dot-files, so fall back to the built-in defaults.
+  note '.env.example is missing in the repository; creating .env from built-in defaults.'
+  cat > .env <<'ENV'
+# Node.js 24+; the Linux installer configures these values.
+PORT=6969
+HOST=0.0.0.0
+NODE_ENV=production
+# Blank accepts the current localhost/IP address with the service port.
+APP_URL=
+TRUST_PROXY=false
+# Blank selects the cookie mode from APP_URL; direct HTTP works without setup.
+COOKIE_SECURE=false
+JTG_NETWORK_MODE=direct-v1
+DATA_DIR=./data
+BACKUP_DIR=./backups
+# Optional: restrict self-registration to an email domain (example.com).
+REGISTRATION_DOMAIN=
+ENV
+}
+protect_private_files() {
+  # If .gitignore is missing from the repo, keep secrets/data out of Git locally.
+  [[ -d .git ]] || return 0
+  mkdir -p .git/info
+  local entry
+  for entry in .env data/ backups/ node_modules/ .jtg-installed '*.log' .preview/; do
+    grep -qxF -- "$entry" .git/info/exclude 2>/dev/null || printf '%s\n' "$entry" >> .git/info/exclude
+  done
+}
 configure_environment() {
-  [[ -f .env ]] || cp -- .env.example .env
+  ensure_env_file
   node --input-type=module - "${1:-$APP_DIR}" "$APP_DIR" <<'JS'
 import fs from 'node:fs';
 const [oldRoot,newRoot]=process.argv.slice(2);
@@ -326,7 +357,7 @@ install_project() {
   [[ "$(process_state "$PM2_HOME")" == missing ]] || die 'A JTG Cloud PM2 entry already exists. Use Repair / migrate for an existing installation.'
   step 3 'Clone JTG Cloud and enter the project directory'; clone_project
   step 4 'Install locked application requirements'; run_command npm ci --omit=dev --ignore-scripts
-  step 5 'Configure private storage'; configure_environment; private_permissions
+  step 5 'Configure private storage'; configure_environment; protect_private_files; private_permissions
   step 6 'Create the owner account'; ensure_owner
   step 7 'Show service addresses'; show_addresses
   step 8 'Start JTG Cloud with PM2'; pm2 start ecosystem.config.cjs --only jtg-cloud --interpreter "$(command -v node)"
@@ -371,7 +402,8 @@ repair_project() {
   heading 'REPAIR / MIGRATE INSTALLATION'
   linux_requirements; install_node; install_pm2
   validate_directory "$existing"; cd "$existing"
-  [[ -f .env ]] || cp -- .env.example .env
+  ensure_env_file
+  protect_private_files
   validate_storage
   [[ -z "$(git -c safe.directory="$existing" status --porcelain --untracked-files=no)" ]] || die 'Save tracked source changes before repair. Your .env/data are ignored and preserved.'
   git -c safe.directory="$existing" fetch origin "$REPO_BRANCH"
