@@ -6,29 +6,29 @@ const GIB = 1024 ** 3, MIB = 1024 ** 2;
 const storage = { get(key) { try { return localStorage.getItem(key); } catch { return null; } }, set(key, value) { try { localStorage.setItem(key, value); } catch {} }, remove(key) { try { localStorage.removeItem(key); } catch {} } };
 const state = { config: {}, user: null, csrf: '', view: 'files', parent: null, entries: [], crumbs: [], search: '', sort: 'updated', layout: storage.get('jtg-layout') || 'list', selected: new Set(), loading: false, uploading: false, maxUpload: 0, chunkSize: 20 * MIB, generation: 0, transfer: null };
 const paths = {
- cloud:'M6 18a4 4 0 0 1-.5-8A6.5 6.5 0 0 1 18 9a4.5 4.5 0 1 1 0 9H6Z',
+ cloud:'M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z',
  home:'m3 10 9-7 9 7v10H3V10Zm6 10v-7h6v7',
- folder:'M3 7V5h6l2 3h10v12H3V7Z',
- clock:'M12 8v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
+ folder:'M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z',
+ clock:'M12 6v6l4 2M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z',
  star:'m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z',
- image:'M3 4h18v16H3V4Zm0 12 5-5 4 4 3-3 6 6M16 8h.01',
- trash:'M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7',
+ image:'M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2ZM21 15l-3.09-3.09a2 2 0 0 0-2.82 0L6 21M10 8.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z',
+ trash:'M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6',
  users:'M16 21v-3a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v3M15 4a4 4 0 0 1 0 8M22 21v-3a4 4 0 0 0-3-3.9M13 6a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
- settings:'m9 3-1 3-3 1-2 5 2 5 3 1 1 3h6l1-3 3-1 2-5-2-5-3-1-1-3H9Zm7 9a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
- shield:'m12 3 8 3v6c0 5-8 9-8 9s-8-4-8-9V6l8-3Zm-4 9 3 3 5-6',
+ settings:'M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6',
+ shield:'M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1ZM9 12l2 2 4-4',
  search:'M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z',
  upload:'M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6',
  download:'M12 3v13m-5-5 5 5 5-5M4 16v5h16v-5',
  plus:'M12 5v14M5 12h14', chevron:'m9 5 7 7-7 7', down:'m6 9 6 6 6-6',
  grid:'M3 3h7v7H3V3Zm11 0h7v7h-7V3ZM3 14h7v7H3v-7Zm11 0h7v7h-7v-7Z',
  list:'M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01',
- file:'M14 2H4v20h16V8l-6-6Zm0 0v6h6M8 13h8m-8 4h6',
- archive:'M4 3h16v18H4V3Zm7 0v2h2v2h-2v2h2v2h-2v2h2v4h-2v-4',
- video:'M3 5h13v14H3V5Zm13 5 5-3v10l-5-3',
- music:'M9 17V5l12-2v12M9 5v4l12-2M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm12-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z',
+ file:'M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7ZM14 2v4a2 2 0 0 0 2 2h4',
+ archive:'M21 8v13H3V8M1 3h22v5H1zM10 12h4',
+ video:'M4 6h10a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2ZM16 13l5.22 3.48a.5.5 0 0 0 .78-.42V7.94a.5.5 0 0 0-.75-.43L16 10.5',
+ music:'M9 18V5l12-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM21 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z',
  more:'M5 12h.01M12 12h.01M19 12h.01', close:'m6 6 12 12M6 18 18 6',
- logout:'M9 21H3V3h6M8 12h13m-5-5 5 5-5 5', lock:'M5 10h14v11H5V10Zm3 0V7a4 4 0 0 1 8 0v3M12 14v3',
- drive:'M4 4h16v16H4V4Zm0 10h16M7 15h.01M10 15h.01',
+ logout:'M9 21H3V3h6M8 12h13m-5-5 5 5-5 5', lock:'M5 11h14a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2ZM7 11V7a5 5 0 0 1 10 0v4',
+ drive:'M22 12H2M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11ZM6 16h.01M10 16h.01',
  help:'M9 9a3 3 0 0 1 6 0c0 2-3 2-3 5m0 3h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
  eye:'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Zm13 0a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z',
  edit:'m15 3 6 6-12 12H3v-6L15 3Zm-3 3 6 6', restore:'M3 3v6h6M3 9a9 9 0 1 1 1 9M12 8v5l3 2',
@@ -36,7 +36,7 @@ const paths = {
  activity:'M3 12h4l3-8 4 16 3-8h4', move:'M12 3v18M3 12h18m-9-9-3 3m3-3 3 3m-3 15-3-3m3 3 3-3M3 12l3-3m-3 3 3 3m15-3-3-3m3 3-3 3',
  mail:'M3 5h18v14H3V5Zm0 0 9 8 9-8', spark:'m12 3 2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7',
  sun:'M12 3v1m0 16v1M3 12h1m16 0h1M5.6 5.6l.7.7m11.4 11.4.7.7m0-12.8-.7.7M6.3 17.7l-.7.7M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
- moon:'M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z', monitor:'M3 4h18v13H3V4Zm5 17h8m-4-4v4', pause:'M8 5v14M16 5v14', arrow:'M4 12h16m-5-5 5 5-5 5'
+ moon:'M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z', monitor:'M3 4h18v13H3V4Zm5 17h8m-4-4v4', pause:'M8 5v14M16 5v14', arrow:'M4 12h16m-5-5 5 5-5 5', cloudup:'M12 13v8M8 17l4-4 4 4M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29', server:'M4 2h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2ZM4 14h16a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2ZM6 6h.01M6 18h.01', doc:'M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7ZM14 2v4a2 2 0 0 0 2 2h4M10 9H8M16 13H8M16 17H8', pdf:'M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7ZM14 2v4a2 2 0 0 0 2 2h4M9 18v-6h1.5a1.5 1.5 0 0 1 0 3H9M14.5 18v-6', sheet:'M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7ZM14 2v4a2 2 0 0 0 2 2h4M8 13h2M14 13h2M8 17h2M14 17h2', slides:'M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M7 21l5-5 5 5', code:'M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7ZM14 2v4a2 2 0 0 0 2 2h4M10 12.5 8 15l2 2.5M14 12.5l2 2.5-2 2.5'
 };
 const icon = (name, cls = '') => `<svg class="${cls}" viewBox="0 0 24 24" aria-hidden="true"><path d="${paths[name] || paths.file}"/></svg>`;
 const button = (action, name, title, cls = '') => `<button type="button" class="icon-btn ${cls}" data-action="${action}" title="${esc(title)}" aria-label="${esc(title)}">${icon(name)}</button>`;
@@ -44,14 +44,18 @@ function size(bytes) { if (!bytes) return '0 B'; const units = ['B','KB','MB','G
 const date = value => new Date(value).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 const initials = value => value.trim().split(/\s+/).map(s => [...s][0]).slice(0,2).join('').toUpperCase();
 function fileType(entry) {
-  if (entry.kind === 'folder') return { icon:'folder', color:'orange', label:'Folder' };
-  const ext = entry.name.split('.').pop().toLowerCase();
-  if (entry.mime.startsWith('image/')) return { icon:'image', color:'blue', label:'Image' };
-  if (['zip','rar','7z','gz','tar'].includes(ext)) return { icon:'archive', color:'orange', label:'Archive' };
-  if (['mp4','mkv','mov','webm'].includes(ext)) return { icon:'video', color:'pink', label:'Video' };
-  if (['mp3','wav','flac','ogg'].includes(ext)) return { icon:'music', color:'green', label:'Audio' };
-  if (['pdf','doc','docx','xls','xlsx','ppt','pptx','txt','md','csv'].includes(ext)) return { icon:'file', color:'', label:'Document' };
-  return { icon:'file', color:'green', label:ext.length < 9 && ext !== entry.name ? ext.toUpperCase() : 'File' };
+  if (entry.kind === 'folder') return { icon:'folder', color:'', label:'Folder' };
+  const ext = entry.name.includes('.') ? entry.name.split('.').pop().toLowerCase() : '';
+  if (entry.mime.startsWith('image/')) return { icon:'image', color:'', label:'Image' };
+  if (['zip','rar','7z','gz','tar'].includes(ext)) return { icon:'archive', color:'', label:'Archive' };
+  if (['mp4','mkv','mov','webm'].includes(ext)) return { icon:'video', color:'', label:'Video' };
+  if (['mp3','wav','flac','ogg'].includes(ext)) return { icon:'music', color:'', label:'Audio' };
+  if (ext === 'pdf') return { icon:'pdf', color:'', label:'Document' };
+  if (['xls','xlsx','csv'].includes(ext)) return { icon:'sheet', color:'', label:'Document' };
+  if (['ppt','pptx'].includes(ext)) return { icon:'slides', color:'', label:'Document' };
+  if (['doc','docx','txt','md'].includes(ext)) return { icon:'doc', color:'', label:'Document' };
+  if (['js','mjs','ts','tsx','jsx','py','json','html','css','sh','php','go','rs','java','c','cpp','sql','yml','yaml'].includes(ext)) return { icon:'code', color:'', label:'Code' };
+  return { icon:'file', color:'', label: ext && ext.length < 9 ? ext.toUpperCase() : 'File' };
 }
 const tile = (name,color = '') => `<div class="tile-icon ${color}">${icon(name)}</div>`;
 function toast(message, error = false) { const div = document.createElement('div'); div.className = `toast ${error ? 'error' : ''}`; div.textContent = message; $('#toast').append(div); setTimeout(() => div.remove(), 4500); }
@@ -72,7 +76,7 @@ function applyBrand() {
   const c = state.config;
   document.title = c.siteName || 'JTG Cloud';
   // Legacy purple and the Hozvik green mean "use the theme's own accent"; any other owner-chosen color is applied.
-  const custom = c.accent && !['#7367f0', '#4ade80'].includes(c.accent.toLowerCase());
+  const custom = c.accent && !['#7367f0', '#4ade80', '#0a0a0a', '#fafafa', '#ffffff'].includes(c.accent.toLowerCase());
   const root = document.documentElement.style;
   if (custom) { root.setProperty('--accent', c.accent); root.setProperty('--accent-text', c.accent); root.setProperty('--accent-soft', `${c.accent}18`); }
   else { root.removeProperty('--accent'); root.removeProperty('--accent-text'); root.removeProperty('--accent-soft'); }
@@ -110,7 +114,11 @@ const crumb = () => {
 function overview() {
   const u = state.user, pct = u.quota ? Math.min(100, u.used / u.quota * 100) : 100;
   const folders = state.entries.filter(e => e.kind === 'folder').length, files = state.entries.length - folders;
-  return `<section class="overview" aria-label="Account overview"><div class="ov-cell ov-wide"><span class="ov-label">Storage used</span><strong>${size(u.used)} <small>of ${size(u.quota)}</small></strong><div class="progress" style="--progress:${pct}%"><i></i></div></div><div class="ov-cell"><span class="ov-label">Available</span><strong>${size(Math.max(0, u.quota - u.used))}</strong></div><div class="ov-cell"><span class="ov-label">Folders</span><strong>${folders}</strong></div><div class="ov-cell"><span class="ov-label">Files</span><strong>${files}</strong></div><div class="ov-cell"><span class="ov-label">Encryption</span><strong class="ov-status"><i class="status-dot"></i>AES-256-GCM</strong></div></section>`;
+  const cell = (name, label, value, cls = '') => `<div class="ov-cell ${cls}"><span class="ov-label">${icon(name)}${label}</span>${value}</div>`;
+  return `<section class="overview" aria-label="Account overview">${cell('drive','Storage used',`<strong>${size(u.used)} <small>of ${size(u.quota)}</small></strong><div class="progress${pct >= 90 ? ' high' : ''}" style="--progress:${pct}%"><i></i></div>`,'ov-wide')}${cell('cloud','Available',`<strong>${size(Math.max(0, u.quota - u.used))}</strong>`)}${cell('folder','Folders',`<strong>${folders}</strong>`)}${cell('file','Files',`<strong>${files}</strong>`)}${cell('lock','Encryption','<strong class="ov-status"><i class="status-dot"></i>AES-256-GCM</strong>')}</section>`;
+}
+function dropzone() {
+  return `<button type="button" class="dropzone" data-action="upload">${tile('cloudup')}<div><strong>Upload files</strong><small>Drag and drop anywhere on this page, or browse. Large files upload in resumable parts.</small></div><span class="dz-cta">Browse files</span></button>`;
 }
 function kindTabs() {
   const files = state.entries.filter(e => e.kind === 'file');
@@ -125,7 +133,7 @@ function renderShell() {
 function updateUsage() {
   if (!state.user || !$('#storage-widget')) return;
   const u = state.user, percent = u.quota ? Math.min(100,u.used/u.quota*100) : 100;
-  $('#storage-widget').innerHTML = `<div class="storage-box"><div class="storage-head">${icon('cloud')}Your storage<span style="margin-left:auto;color:var(--muted);font-size:10px">${percent.toFixed(0)}%</span></div><div class="progress" style="--progress:${percent}%"><i></i></div><div class="storage-caption"><strong>${size(u.used)}</strong> of ${size(u.quota)} used</div><button class="text-button" data-action="storage-help" style="padding:10px 0 0">Storage details ${icon('chevron')}</button></div>`;
+  $('#storage-widget').innerHTML = `<div class="storage-box"><div class="storage-head">${icon('cloud')}Your storage<span style="margin-left:auto;color:var(--muted);font-size:10px">${percent.toFixed(0)}%</span></div><div class="progress${percent >= 90 ? ' high' : ''}" style="--progress:${percent}%"><i></i></div><div class="storage-caption"><strong>${size(u.used)}</strong> of ${size(u.quota)} used</div><button class="text-button" data-action="storage-help" style="padding:10px 0 0">Storage details ${icon('chevron')}</button></div>`;
 }
 function markNav() { $$('[data-view]').forEach(b => b.classList.toggle('active', b.dataset.view === state.view)); }
 function closeSidebar() { $('.sidebar')?.classList.remove('open'); $('.screen-shade')?.classList.remove('open'); }
@@ -157,7 +165,7 @@ function renderFiles() {
   const desc = {files:'Browse and manage the files stored in your private cloud.',recent:'Files you added or changed recently.',starred:'Files and folders you marked as favorites.',photos:'Image files stored in your account.',trash:'Deleted items stay here until you remove them permanently.'};
   const folders = state.entries.filter(e => e.kind === 'folder'), rows = sortedEntries();
   const categories = [{label:'Photos',icon:'image',color:'blue',kind:'Image'},{label:'Documents',icon:'file',color:'',kind:'Document'},{label:'Archives',icon:'archive',color:'orange',kind:'Archive'},{label:'Other files',icon:'grid',color:'green',kind:'Other'}];
-  $('#content').innerHTML = `<div class="page-heading"><div>${crumb()}<h1>${esc(title)}</h1><p>${state.search ? `Results for “${esc(state.search)}”` : desc[view]}</p></div><div class="heading-actions">${view === 'trash' ? '<button class="btn secondary" data-action="empty-trash">'+icon('trash')+'Empty trash</button>' : '<button class="btn secondary" data-action="new-folder">'+icon('plus')+'New folder</button><button class="btn" data-action="upload">'+icon('upload')+'Upload files</button>'}</div></div>${state.user.used >= state.user.quota ? '<div class="notice">'+icon('drive')+'Your storage is full. Empty trash or ask your administrator for more space.</div>' : ''}${root ? overview() : ''}${state.parent && !state.search ? `<div class="breadcrumbs"><button data-parent="">My files</button>${state.crumbs.map((p,i) => icon('chevron') + (i === state.crumbs.length-1 ? `<span>${esc(p.name)}</span>` : `<button data-parent="${p.id}">${esc(p.name)}</button>`)).join('')}</div>` : ''}<div class="file-panel"><div class="file-toolbar"><h2>${state.parent ? esc(state.crumbs.at(-1)?.name || 'Folder') : root ? 'All files' : esc(title)}</h2><div class="toolbar-controls"><select id="sort" aria-label="Sort files"><option value="updated" ${state.sort === 'updated' ? 'selected' : ''}>Last modified</option><option value="name" ${state.sort === 'name' ? 'selected' : ''}>Name A–Z</option><option value="size" ${state.sort === 'size' ? 'selected' : ''}>Largest first</option></select><div class="segmented"><button data-layout="list" class="${state.layout === 'list' ? 'active' : ''}" aria-label="List view">${icon('list')}</button><button data-layout="grid" class="${state.layout === 'grid' ? 'active' : ''}" aria-label="Grid view">${icon('grid')}</button></div></div></div>${view === 'files' && !state.search ? kindTabs() : ''}<div id="selection-toolbar"></div><div id="file-results">${rows.length ? state.layout === 'grid' ? fileGrid(rows) : fileTable(rows) : emptyState(view)}</div><div class="panel-foot"><span>${rows.length} ${rows.length === 1 ? 'item' : 'items'}${state.total > rows.length ? ` · showing first ${rows.length} of ${state.total}; use search to narrow results` : ''}</span><span class="security-note">${icon('shield')}Encrypted at rest · Only you can access your files</span></div></div>`;
+  $('#content').innerHTML = `<div class="page-heading"><div>${crumb()}<h1>${esc(title)}</h1><p>${state.search ? `Results for “${esc(state.search)}”` : desc[view]}</p></div><div class="heading-actions">${view === 'trash' ? '<button class="btn secondary" data-action="empty-trash">'+icon('trash')+'Empty trash</button>' : '<button class="btn secondary" data-action="new-folder">'+icon('plus')+'New folder</button><button class="btn" data-action="upload">'+icon('upload')+'Upload files</button>'}</div></div>${state.user.used >= state.user.quota ? '<div class="notice">'+icon('drive')+'Your storage is full. Empty trash or ask your administrator for more space.</div>' : ''}${root ? overview() : ''}${state.parent && !state.search ? `<div class="breadcrumbs"><button data-parent="">My files</button>${state.crumbs.map((p,i) => icon('chevron') + (i === state.crumbs.length-1 ? `<span>${esc(p.name)}</span>` : `<button data-parent="${p.id}">${esc(p.name)}</button>`)).join('')}</div>` : ''}${view === 'files' && !state.search ? dropzone() : ''}<div class="file-panel"><div class="file-toolbar"><h2>${state.parent ? esc(state.crumbs.at(-1)?.name || 'Folder') : root ? 'All files' : esc(title)}</h2><div class="toolbar-controls"><select id="sort" aria-label="Sort files"><option value="updated" ${state.sort === 'updated' ? 'selected' : ''}>Last modified</option><option value="name" ${state.sort === 'name' ? 'selected' : ''}>Name A–Z</option><option value="size" ${state.sort === 'size' ? 'selected' : ''}>Largest first</option></select><div class="segmented"><button data-layout="list" class="${state.layout === 'list' ? 'active' : ''}" aria-label="List view">${icon('list')}</button><button data-layout="grid" class="${state.layout === 'grid' ? 'active' : ''}" aria-label="Grid view">${icon('grid')}</button></div></div></div>${view === 'files' && !state.search ? kindTabs() : ''}<div id="selection-toolbar"></div><div id="file-results">${rows.length ? state.layout === 'grid' ? fileGrid(rows) : fileTable(rows) : emptyState(view)}</div><div class="panel-foot"><span>${rows.length} ${rows.length === 1 ? 'item' : 'items'}${state.total > rows.length ? ` · showing first ${rows.length} of ${state.total}; use search to narrow results` : ''}</span><span class="security-note">${icon('shield')}Encrypted at rest · Only you can access your files</span></div></div>`;
   updateSelection();
 }
 function emptyState(view) {
